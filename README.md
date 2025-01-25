@@ -32,7 +32,7 @@ Python-dotenv: Securely stores sensitive API keys.
 Base64: For embedding images in the app’s responses.
 🔗 Try it out now: https://resumescorer.streamlit.app/
 👨‍💻 Check out the code & repo: https://github.com/rajdeep25nov/resumescorer.git
-
+Live Video - https://youtu.be/3mKs4OnX8LE?si=zTh4HKsKIzV-oEmL
 
 Running the Application
 
