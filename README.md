@@ -1,4 +1,4 @@
-title: ATS Scanner
+
 emoji: 👁
 colorFrom: indigo
 colorTo: red
