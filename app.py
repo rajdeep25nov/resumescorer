@@ -6,6 +6,7 @@ import io
 from PIL import Image
 import pdf2image
 import google.generativeai as genai
+from fpdf import FPDF  # For generating PDFs
 
 # Set page config (make sure it's at the very top)
 st.set_page_config(page_title="ATS Resume Expert", layout="wide")
@@ -109,7 +110,6 @@ st.markdown("""
 hide_menu_style = """<style>#MainMenu {visibility: hidden;} footer {visibility: hidden;}</style>"""
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
-
 st.markdown(
         r"""
         <style>
@@ -149,8 +149,45 @@ def input_pdf_setup(uploaded_file):
     else:
         raise FileNotFoundError("No file Uploaded")
 
+# Function to generate interview questions
+def generate_interview_questions(job_description, prompt_type="JD"):
+    model = genai.GenerativeModel("gemini-pro")
+    if prompt_type == "JD":
+        prompt = f"Generate 10 most asked interview questions based on the following job description:\n{job_description}"
+    else:
+        prompt = "Generate 10 commonly asked interview questions for warmup."
+
+    response = model.generate_content(prompt)
+    return response.text.strip().split("\n")
+
+# Function to generate a PDF report
+def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    
+    # Add Resume Evaluation
+    pdf.cell(200, 10, txt="Resume Evaluation", ln=True)
+    pdf.multi_cell(0, 10, txt=resume_evaluation)
+    
+    # Add Percentage Match
+    pdf.cell(200, 10, txt="Percentage Match", ln=True)
+    pdf.multi_cell(0, 10, txt=percentage_match)
+    
+    # Add JD-Specific Questions
+    pdf.cell(200, 10, txt="Most Asked Interview Questions (JD-Specific):", ln=True)
+    for question in jd_questions:
+        pdf.multi_cell(0, 10, txt=f"- {question}")
+    
+    # Add Warmup Questions
+    pdf.cell(200, 10, txt="Warmup Questions (General):", ln=True)
+    for question in warmup_questions:
+        pdf.multi_cell(0, 10, txt=f"- {question}")
+    
+    return pdf.output(dest="S").encode("latin1")
+
 # Streamlit app UI
-st.header("ATS Resume Scanner")
+st.header("Resume Scorer")
 input_text = st.text_area("Job Description: ", key="input")
 uploaded_file = st.file_uploader("Upload your Resume(PDF)...", type=["pdf"])
 
@@ -159,6 +196,7 @@ if uploaded_file is not None:
 
 submit1 = st.button("Tell me About the Resume")
 submit3 = st.button("Percentage match")
+submit_questions = st.button("Generate Interview Questions")
 
 input_prompt1 = """
 You are an experienced HR with Tech Experience in the field of any one job role from Data Science, Full stack 
@@ -175,22 +213,55 @@ Your task is to evaluate the resume against the provided job description. Give m
 the job description. First, the output should come as a percentage and then keywords missing, and last, final thoughts.
 """
 
+# Variables to store results
+resume_evaluation = ""
+percentage_match = ""
+jd_questions = []
+warmup_questions = []
+
 if submit1:
     if uploaded_file is not None:
         pdf_content = input_pdf_setup(uploaded_file)
-        response = get_gemini_response(input_prompt1, pdf_content, input_text)
+        resume_evaluation = get_gemini_response(input_prompt1, pdf_content, input_text)
         st.subheader("The Response is")
-        st.write(response)
+        st.write(resume_evaluation)
     else:
         st.write("Please upload a pdf")
 elif submit3:
     if uploaded_file is not None:
         pdf_content = input_pdf_setup(uploaded_file)
-        response = get_gemini_response(input_prompt3, pdf_content, input_text)
+        percentage_match = get_gemini_response(input_prompt3, pdf_content, input_text)
         st.subheader("The Response is")
-        st.write(response)
+        st.write(percentage_match)
     else:
         st.write("Please upload a pdf")
+
+# Handle Interview Questions Generation
+if submit_questions:
+    if input_text:
+        # Generate most asked interview questions based on JD
+        jd_questions = generate_interview_questions(input_text, prompt_type="JD")
+        st.subheader("Most Asked Interview Questions (JD-Specific):")
+        for question in jd_questions:
+            st.write(f"- {question}")
+        
+        # Generate warmup questions (general)
+        warmup_questions = generate_interview_questions(input_text, prompt_type="Warmup")
+        st.subheader("Warmup Questions (General):")
+        for question in warmup_questions:
+            st.write(f"- {question}")
+    else:
+        st.write("Please provide a Job Description to generate questions.")
+
+# Add PDF Download Button
+if resume_evaluation or percentage_match or jd_questions or warmup_questions:
+    pdf = generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions)
+    st.download_button(
+        label="Download Results as PDF",
+        data=pdf,
+        file_name="results.pdf",
+        mime="application/pdf",
+    )
 
 # Footer with credit text
 st.markdown("""
