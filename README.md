@@ -1,43 +1,38 @@
+Key Technologies Used 🛠️
+Streamlit: The interactive framework that makes building and deploying this app easy and intuitive.
+👉 Features: Custom page layout, responsive design, and beautiful UI (colorful bubble animations! 🎨).
 
+Gemini AI API 1.5 Flash: Google’s powerful generative AI model performs the deep analysis of your resume against the job description. 🔍✨
 
-Overview
+pdf2image & Pillow: Converts PDF pages into images for better text extraction, making it easier to analyze resumes. 🖼️➡️📄
 
-This ATS Resume Scanner web application allows users to upload their resumes (in PDF format) and compare them against a job description. It utilizes Google's Generative AI model to provide insights and feedback on whether a candidate's resume matches the provided job description. The application evaluates resumes in multiple aspects, including the percentage match and missing keywords, making it an essential tool for job seekers and HR professionals
+Python-dotenv: Securely handles sensitive data (like API keys) without exposing them in the code. 🔐
 
+Base64: For embedding image data of PDF pages into the app's response. 🖼️➡️💻
 
-Features
+How It Works 🏗️
+1️⃣ Input the Job Description: Paste the job description for the role you're applying for.
+2️⃣ Upload Your Resume (PDF): Upload your resume for analysis.
+3️⃣ Tell Me About the Resume: Get a professional evaluation on how well your resume matches the job description.
+4️⃣ Percentage Match: See the percentage match of keywords, and receive suggestions on missing skills or experience.
 
-Job Description Input: Users can input the job description for a specific role.
-Resume Upload: Users can upload a resume (PDF format) for analysis.
-ATS Evaluation: The app evaluates the resume using Google's generative AI model and provides detailed feedback.
-Keyword Match: The app evaluates the percentage match of the resume to the job description and highlights missing keywords.
-Image-based PDF Parsing: Uses pdf2image and Pillow for converting PDF resumes into images for better processing.
-Interactive UI: Built using Streamlit, making it easy to interact with.
+💡 Why It’s Useful:
 
-
-Technologies Used
-
-Streamlit: A framework to build the web application.
-Google Generative AI: For analyzing and generating insights on resumes.
-Pillow: For image processing and manipulation.
-pdf2image: For converting PDF files into images for better text extraction.
-Python-dotenv: For securely storing environment variables like API keys.
-
-
-
-Usage
-
-Input the Job Description: Paste the job description for the role you're applying for in the provided text area.
-Upload the Resume: Upload your resume in PDF format.
-Click "Tell me About the Resume" to get an analysis of how well your resume matches the job description.
-Click "Percentage Match" to see the percentage of keyword match between your resume and the job description.
-The application will return:
-
-A professional evaluation of the resume.
-The percentage match between the resume and job description.
-Missing keywords or skills in the resume.
-
-
+For Job Seekers: Tailor your resume to each job description, increasing your chances of getting noticed by ATS!
+For HR Professionals: Quickly screen resumes to match the best candidates to your open roles. ✅
+Features Include:
+ATS Evaluation: Detailed analysis and professional evaluation of your resume’s alignment with the job role. 🧠
+Keyword Match: A percentage score to see how well your resume matches the required job skills. 🔑
+Image-based PDF Parsing: Converts PDF resumes into images to improve text extraction accuracy. 📸
+Technologies Behind the App 🛠️:
+Streamlit: For building a simple yet powerful interactive UI.
+Gemini AI API 1.5 Flash: Deep AI-based resume analysis.
+pdf2image & Pillow: Converts PDF resumes to images for better parsing.
+Python-dotenv: Securely stores sensitive API keys.
+Base64: For embedding images in the app’s responses.
+🔗 Try it out now: https://resumescorer.streamlit.app/
+👨‍💻 Check out the code & repo: https://github.com/rajdeep25nov/resumescorer.git
+Live Video - https://youtu.be/3mKs4OnX8LE?si=zTh4HKsKIzV-oEmL
 
 Running the Application
 
@@ -46,5 +41,4 @@ streamlit run app.py
 
 
 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+What License? Do whatever suits the best and serve the community.
