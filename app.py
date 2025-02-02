@@ -222,7 +222,8 @@ def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_quest
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-    
+    pdf.set_left_margin(10)  # Set left margin to 10mm
+    pdf.set_right_margin(10)  # Set right margin to 10mm
     # Add Resume Evaluation with multi_cell for wrapping text
     pdf.cell(200, 10, txt="Resume Evaluation", ln=True)
     pdf.multi_cell(0, 10, txt=resume_evaluation)
