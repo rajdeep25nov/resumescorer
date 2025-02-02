@@ -219,6 +219,7 @@ import io
 # Function to generate a PDF report
 def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard):
     pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     
