@@ -12,31 +12,15 @@ import time  # For simulating loading
 
 # Set page config (make sure it's at the very top)
 st.set_page_config(
-    page_title="Resume Scorer",
+    page_title="ATS Resume Expert",
     page_icon="📄",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Add cs
+# Add custom CSS for enhanced UI
 st.markdown("""
     <style>
-            
-     /* General Page Styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Remove extra space at the top */
-        .stApp {
-            margin-top: -130px; /* Adjust this value as needed */
-        }
-
-
         /* General Page Styling */
         body {
             font-family: 'Arial', sans-serif;
@@ -106,35 +90,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Hide menu bar defult
+# Hide Streamlit's default menu and footer
 hide_menu_style = """
     <style>
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
     </style>
 """
-
-
-
-
-hide_menu_style = """<style>#MainMenu {visibility: hidden;} footer {visibility: hidden;}</style>"""
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
-st.markdown(
-        r"""
-        <style>
-        .stAppDeployButton {
-                visibility: hidden;
-            }
-        </style>
-        """, unsafe_allow_html=True
-    )
-
-
-
-st.markdown(hide_menu_style, unsafe_allow_html=True)
-
-# app setup
+# Streamlit app setup
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
@@ -178,7 +143,7 @@ def input_pdf_setup(uploaded_file):
     else:
         raise FileNotFoundError("No file Uploaded")
 
-# extract txt frm pdf
+# Function to extract text from PDF
 def extract_text_from_pdf(uploaded_file):
     try:
         reader = PyPDF2.PdfReader(uploaded_file)
@@ -190,7 +155,7 @@ def extract_text_from_pdf(uploaded_file):
         st.error(f"Error extracting text from PDF: {e}")
         return ""
 
-# gen quest
+# Function to generate interview questions
 def generate_interview_questions(job_description, prompt_type="JD"):
     model = genai.GenerativeModel("gemini-pro")
     if prompt_type == "JD":
@@ -201,7 +166,7 @@ def generate_interview_questions(job_description, prompt_type="JD"):
     response = model.generate_content(prompt)
     return response.text.strip().split("\n")
 
-# Fun gene a cover letter
+# Function to generate a cover letter
 def generate_cover_letter(resume_text, job_description):
     model = genai.GenerativeModel("gemini-pro")
     prompt = f"""
@@ -216,7 +181,7 @@ def generate_cover_letter(resume_text, job_description):
     response = model.generate_content(prompt)
     return response.text
 
-# Fun to calculate resume scorecard
+# Function to calculate resume scorecard
 def calculate_scorecard(resume_text, job_description):
     model = genai.GenerativeModel("gemini-pro")
     prompt = f"""
@@ -241,7 +206,7 @@ def calculate_scorecard(resume_text, job_description):
     response = model.generate_content(prompt)
     return response.text
 
-# Fun to generate a PDF report
+# Function to generate a PDF report
 def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard):
     pdf = FPDF()
     pdf.add_page()
@@ -273,10 +238,11 @@ def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_quest
     pdf.cell(200, 10, txt="Resume Scorecard", ln=True)
     pdf.multi_cell(0, 10, txt=scorecard)
     
+    # Return the PDF as bytes
     return pdf.output(dest="S").encode("latin1")
 
 # Streamlit app UI
-st.title("📄 Resume Scorer")
+st.title("📄 ATS Resume Expert")
 st.markdown("Welcome to the ATS Resume Expert! Upload your resume and job description to get started.")
 
 # Input for Job Description
@@ -314,7 +280,7 @@ warmup_questions = []
 cover_letter = ""
 scorecard = ""
 
-# Loading Spi
+# Loading Spinner
 def show_loading_spinner():
     st.markdown("""
         <div class="loading-spinner">
@@ -322,7 +288,7 @@ def show_loading_spinner():
         </div>
     """, unsafe_allow_html=True)
 
-# chill all fine nothing sus fr
+# Handle Button Clicks
 if submit1 or submit3 or submit_questions or submit_cover_letter or submit_scorecard:
     if uploaded_file is not None and input_text:
         with st.spinner("Generating insights..."):
@@ -372,7 +338,7 @@ if submit1 or submit3 or submit_questions or submit_cover_letter or submit_score
     else:
         st.warning("Please upload a resume and provide a job description.")
 
-# pdf butun
+# Add PDF Download Button
 if resume_evaluation or percentage_match or jd_questions or warmup_questions or cover_letter or scorecard:
     pdf = generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard)
     st.download_button(
@@ -382,10 +348,9 @@ if resume_evaluation or percentage_match or jd_questions or warmup_questions or 
         mime="application/pdf",
     )
 
-#footr
+# Footer with credit text
 st.markdown("""
     <div class="footer">
         <p>Created by Rajdeep Jaiswal</p>
     </div>
 """, unsafe_allow_html=True)
-#here tbh ready to deploy fs.....
