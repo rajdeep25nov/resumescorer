@@ -210,6 +210,9 @@ def calculate_scorecard(resume_text, job_description):
     return response.text
 
 
+from fpdf import FPDF
+import io
+
 # Function to generate a PDF report
 def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard):
     pdf = FPDF()
@@ -242,8 +245,12 @@ def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_quest
     pdf.cell(200, 10, txt="Resume Scorecard", ln=True)
     pdf.multi_cell(0, 10, txt=scorecard)
     
-    # Get PDF as bytes (no need to wrap in `bytes()`)
-    return pdf.output(dest="S")
+    # Store the PDF in memory as a byte stream (no file system)
+    pdf_output = io.BytesIO()  # Create an in-memory byte stream
+    pdf.output(pdf_output)  # Write the PDF to the byte stream
+    pdf_output.seek(0)  # Reset the pointer to the beginning of the stream
+    
+    return pdf_output.read()  # Return the byte data of the PDF
 
 
 
