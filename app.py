@@ -209,7 +209,7 @@ def calculate_scorecard(resume_text, job_description):
     response = model.generate_content(prompt)
     return response.text
 
-# Function to generate a PDF report
+
 # Function to generate a PDF report
 def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard):
     pdf = FPDF()
@@ -242,8 +242,11 @@ def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_quest
     pdf.cell(200, 10, txt="Resume Scorecard", ln=True)
     pdf.multi_cell(0, 10, txt=scorecard)
     
-    # Return the PDF as a bytearray (no need for .encode())
+    # Get PDF as bytes (no need to wrap in `bytes()`)
     return pdf.output(dest="S")
+
+
+
 
 
 # Streamlit app UI
