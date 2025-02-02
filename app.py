@@ -27,7 +27,10 @@ st.markdown("""
             background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             color: #333;
         }
-
+ /* Remove extra space at the top */
+        .stApp {
+            margin-top: -100px; /* Adjust this value as needed */
+        }
         /* Colorful Buttons */
         .stButton>button {
             background: linear-gradient(135deg, #6a11cb, #2575fc);
@@ -238,8 +241,7 @@ def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_quest
     pdf.cell(200, 10, txt="Resume Scorecard", ln=True)
     pdf.multi_cell(0, 10, txt=scorecard)
     
-    # Return the PDF as bytes
-    return pdf.output()
+    return pdf.output(dest="S").encode("latin1")
 
 # Streamlit app UI
 st.title("📄 ATS Resume Expert")
