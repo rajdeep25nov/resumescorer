@@ -239,7 +239,7 @@ def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_quest
     pdf.multi_cell(0, 10, txt=scorecard)
     
     # Return the PDF as bytes
-    return pdf.output(dest="S").encode("latin1")
+    return pdf.output()
 
 # Streamlit app UI
 st.title("📄 ATS Resume Expert")
