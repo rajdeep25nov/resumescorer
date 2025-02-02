@@ -213,17 +213,20 @@ def calculate_scorecard(resume_text, job_description):
 from fpdf import FPDF
 import io
 
+from fpdf import FPDF
+import io
+
 # Function to generate a PDF report
 def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     
-    # Add Resume Evaluation
+    # Add Resume Evaluation with multi_cell for wrapping text
     pdf.cell(200, 10, txt="Resume Evaluation", ln=True)
     pdf.multi_cell(0, 10, txt=resume_evaluation)
     
-    # Add Percentage Match
+    # Add Percentage Match with multi_cell for wrapping text
     pdf.cell(200, 10, txt="Percentage Match", ln=True)
     pdf.multi_cell(0, 10, txt=percentage_match)
     
@@ -232,16 +235,12 @@ def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_quest
     for question in jd_questions:
         pdf.multi_cell(0, 10, txt=f"- {question}")
     
-    # Add Warmup Questions
-    pdf.cell(200, 10, txt="Warmup Questions (General):", ln=True)
-    for question in warmup_questions:
-        pdf.multi_cell(0, 10, txt=f"- {question}")
     
-    # Add Cover Letter
+    # Add Cover Letter with multi_cell for wrapping text
     pdf.cell(200, 10, txt="Cover Letter", ln=True)
     pdf.multi_cell(0, 10, txt=cover_letter)
     
-    # Add Scorecard
+    # Add Scorecard with multi_cell for wrapping text
     pdf.cell(200, 10, txt="Resume Scorecard", ln=True)
     pdf.multi_cell(0, 10, txt=scorecard)
     
@@ -251,8 +250,6 @@ def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_quest
     pdf_output.seek(0)  # Reset the pointer to the beginning of the stream
     
     return pdf_output.read()  # Return the byte data of the PDF
-
-
 
 
 
