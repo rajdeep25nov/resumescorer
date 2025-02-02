@@ -354,14 +354,17 @@ if submit1 or submit3 or submit_questions or submit_cover_letter or submit_score
         st.warning("Please upload a resume and provide a job description.")
 
 # Add PDF Download Button
-if resume_evaluation or percentage_match or jd_questions or warmup_questions or cover_letter or scorecard:
-    pdf = generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard)
+try:
+    pdf_data = generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard)
     st.download_button(
         label="Download Results as PDF",
-        data=pdf,
+        data=pdf_data,
         file_name="results.pdf",
-        mime="application/pdf",
+        mime="application/pdf"
     )
+except Exception as e:
+    st.error(f"Error generating or downloading PDF: {e}")
+
 
 # Footer with credit text
 st.markdown("""
