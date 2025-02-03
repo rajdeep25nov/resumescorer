@@ -153,15 +153,18 @@ def extract_text_from_pdf(uploaded_file):
         return ""
 
 # Function to generate interview questions
-def generate_interview_questions(job_description, prompt_type="JD"):
+def generate_interview_questions(job_description):
     model = genai.GenerativeModel("gemini-pro")
-    if prompt_type == "JD":
-        prompt = f"Generate 10 most asked interview questions based on the following job description:\n{job_description}"
-    else:
-        prompt = "Generate 10 commonly asked interview questions for warmup."
-
-    response = model.generate_content(prompt)
-    return response.text.strip().split("\n")
+    
+    # Generate JD-specific questions
+    jd_prompt = f"Generate 10 most asked interview questions based on the following job description:\n{job_description}"
+    jd_questions = model.generate_content(jd_prompt).text.strip().split("\n")
+    
+    # Generate warmup questions
+    warmup_prompt = "Generate 10 commonly asked interview questions for warmup."
+    warmup_questions = model.generate_content(warmup_prompt).text.strip().split("\n")
+    
+    return jd_questions, warmup_questions
 
 # Function to generate a cover letter
 def generate_cover_letter(resume_text, job_description):
@@ -308,12 +311,11 @@ if submit1 or submit3 or submit_questions or submit_cover_letter or submit_score
                 st.write(percentage_match)
 
             if submit_questions:
-                jd_questions = generate_interview_questions(input_text, prompt_type="JD")
+                jd_questions, warmup_questions = generate_interview_questions(input_text)
                 st.subheader("Most Asked Interview Questions (JD-Specific):")
                 for question in jd_questions:
                     st.write(f"- {question}")
 
-                warmup_questions = generate_interview_questions(input_text, prompt_type="Warmup")
                 st.subheader("Warmup Questions (General):")
                 for question in warmup_questions:
                     st.write(f"- {question}")
