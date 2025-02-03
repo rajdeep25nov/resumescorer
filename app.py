@@ -27,7 +27,7 @@ st.markdown("""
             background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             color: #333;
         }
- /* Remove extra space at the top */
+        /* Remove extra space at the top */
         .stApp {
             margin-top: -100px; /* Adjust this value as needed */
         }
@@ -43,12 +43,10 @@ st.markdown("""
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         .stButton>button:hover {
             background: linear-gradient(135deg, #2575fc, #6a11cb);
             transform: scale(1.05);
         }
-
         /* Loading Spinner */
         .loading-spinner {
             display: flex;
@@ -56,7 +54,6 @@ st.markdown("""
             align-items: center;
             height: 100px;
         }
-
         .spinner {
             border: 8px solid #f3f3f3;
             border-top: 8px solid #6a11cb;
@@ -65,12 +62,10 @@ st.markdown("""
             height: 60px;
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             .stButton>button {
@@ -78,7 +73,6 @@ st.markdown("""
                 margin-bottom: 10px;
             }
         }
-
         /* Footer Styling */
         .footer {
             position: fixed;
@@ -209,51 +203,51 @@ def calculate_scorecard(resume_text, job_description):
     response = model.generate_content(prompt)
     return response.text
 
-
-from fpdf import FPDF
-import io
-
-from fpdf import FPDF
-import io
-
 # Function to generate a PDF report
 def generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-    pdf.set_font("Arial", size=10)
-    pdf.set_left_margin(10)  # Set left margin to 10mm
-    pdf.set_right_margin(10)  # Set right margin to 10mm
-    # Add Resume Evaluation with multi_cell for wrapping text
+    pdf.set_font("Arial", size=10)  # Smaller font size for better wrapping
+
+    # Add Resume Evaluation
     pdf.cell(200, 10, txt="Resume Evaluation", ln=True)
     pdf.multi_cell(0, 10, txt=resume_evaluation)
-    
-    # Add Percentage Match with multi_cell for wrapping text
+
+    # Add Percentage Match
     pdf.cell(200, 10, txt="Percentage Match", ln=True)
     pdf.multi_cell(0, 10, txt=percentage_match)
-    
+
     # Add JD-Specific Questions
     pdf.cell(200, 10, txt="Most Asked Interview Questions (JD-Specific):", ln=True)
     for question in jd_questions:
         pdf.multi_cell(0, 10, txt=f"- {question}")
-    
-    
-    # Add Cover Letter with multi_cell for wrapping text
+
+    # Add Warmup Questions
+    pdf.cell(200, 10, txt="Warmup Questions (General):", ln=True)
+    for question in warmup_questions:
+        pdf.multi_cell(0, 10, txt=f"- {question}")
+
+    # Add Cover Letter
     pdf.cell(200, 10, txt="Cover Letter", ln=True)
     pdf.multi_cell(0, 10, txt=cover_letter)
-    
-    # Add Scorecard with multi_cell for wrapping text
+
+    # Add Scorecard
     pdf.cell(200, 10, txt="Resume Scorecard", ln=True)
     pdf.multi_cell(0, 10, txt=scorecard)
-    
-    # Store the PDF in memory as a byte stream (no file system)
-    pdf_output = io.BytesIO()  # Create an in-memory byte stream
-    pdf.output(pdf_output)  # Write the PDF to the byte stream
-    pdf_output.seek(0)  # Reset the pointer to the beginning of the stream
-    
-    return pdf_output.read()  # Return the byte data of the PDF
 
+    # Save the PDF to a temporary file
+    temp_file = "temp_results.pdf"
+    pdf.output(temp_file)
 
+    # Read the temporary file as bytes
+    with open(temp_file, "rb") as f:
+        pdf_bytes = f.read()
+
+    # Delete the temporary file
+    os.remove(temp_file)
+
+    return pdf_bytes
 
 # Streamlit app UI
 st.title("📄 ATS Resume Expert")
@@ -293,14 +287,6 @@ jd_questions = []
 warmup_questions = []
 cover_letter = ""
 scorecard = ""
-
-# Loading Spinner
-def show_loading_spinner():
-    st.markdown("""
-        <div class="loading-spinner">
-            <div class="spinner"></div>
-        </div>
-    """, unsafe_allow_html=True)
 
 # Handle Button Clicks
 if submit1 or submit3 or submit_questions or submit_cover_letter or submit_scorecard:
@@ -354,16 +340,18 @@ if submit1 or submit3 or submit_questions or submit_cover_letter or submit_score
 
 # Add PDF Download Button
 try:
-    pdf_data = generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard)
-    st.download_button(
-        label="Download Results as PDF",
-        data=pdf_data,
-        file_name="results.pdf",
-        mime="application/pdf"
-    )
+    if resume_evaluation or percentage_match or jd_questions or warmup_questions or cover_letter or scorecard:
+        pdf_data = generate_pdf(resume_evaluation, percentage_match, jd_questions, warmup_questions, cover_letter, scorecard)
+        st.download_button(
+            label="Download Results as PDF",
+            data=pdf_data,
+            file_name="results.pdf",
+            mime="application/pdf"
+        )
+    else:
+        st.warning("No data available to generate PDF.")
 except Exception as e:
     st.error(f"Error generating or downloading PDF: {e}")
-
 
 # Footer with credit text
 st.markdown("""
